@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CryptoCybin</title>
+<meta name="description" content="CryptoCybin runs AI inference, builds custom models and agents, and works on-chain. Public work on GitHub and Hugging Face.">
+<link rel="canonical" href="https://cryptocybin.xyz/">
+<meta name="theme-color" content="#070B24">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CryptoCybin">
+<meta property="og:description" content="AI inference, custom models, and on-chain work.">
+<meta property="og:url" content="https://cryptocybin.xyz/">
+<meta property="og:image" content="https://cryptocybin.xyz/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&family=Unbounded:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070B24;
+    --bg-deep: #04061A;
+    --ink: #E8EBFF;
+    --ink-soft: #9AA3D2;
+    --ink-faint: #4E568A;
+    --cyan: #00C2FF;
+    --blue: #1D5CED;
+    --violet: #6A1FD6;
+    --line: rgba(120, 140, 230, 0.18);
+    --display: "Unbounded", "Outfit", sans-serif;
+    --body: "Outfit", system-ui, sans-serif;
+    --measure: 34rem;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-weight: 300;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    width: min(100% - 2.5rem, 72rem);
+    margin-inline: auto;
+  }
+
+  /* Header */
+  .top {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 1.5rem;
+  }
+  .brand { display: inline-flex; align-items: center; gap: 0.6rem; }
+  .brand img { display: block; height: 2.5rem; width: auto; }
+  .wordmark { font-weight: 500; font-size: 1.35rem; letter-spacing: -0.01em; }
+  .wordmark b {
+    font-weight: 500;
+    background: linear-gradient(90deg, var(--cyan), var(--blue) 55%, var(--violet));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .top nav { display: flex; gap: 1.75rem; }
+  .top nav a {
+    font-weight: 400;
+    color: var(--ink-soft);
+    padding-block: 0.25rem;
+    border-bottom: 1px solid transparent;
+    transition: color 160ms ease, border-color 160ms ease;
+  }
+  .top nav a:hover { color: var(--ink); border-color: var(--cyan); }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: calc(100svh - 6rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: 2rem;
+    padding-block: 2rem 4rem;
+  }
+  #net {
+    position: absolute;
+    top: -6rem;
+    left: 50%;
+    width: 100vw;
+    height: calc(100% + 14rem);
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, #000 20%, #000 70%, transparent 100%);
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, #000 20%, #000 70%, transparent 100%);
+  }
+  .hero::before {
+    /* keeps the text column legible over the network */
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 -50vw;
+    width: calc(50vw + 60%);
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 55%, rgba(7, 11, 36, 0) 100%);
+  }
+  .hero-copy { position: relative; z-index: 2; }
+  .hero-mark {
+    position: relative;
+    z-index: 2;
+    justify-self: center;
+    width: min(100%, 22rem);
+  }
+  .hero-mark img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 40px rgba(0, 194, 255, 0.25)) drop-shadow(0 0 120px rgba(106, 31, 214, 0.35));
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(1.8rem, 1rem + 2.9vw, 3.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 1.5rem;
+    max-width: 16ch;
+  }
+  h1 span { display: block; }
+  h1 .grow {
+    font-weight: 400;
+    background: linear-gradient(90deg, var(--cyan) 0%, var(--blue) 45%, var(--violet) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .lede {
+    max-width: var(--measure);
+    color: var(--ink-soft);
+    font-size: 1.125rem;
+    margin: 0 0 2.25rem;
+  }
+  .lede strong { font-weight: 500; color: var(--ink); }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; align-items: center; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.35rem;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    line-height: 1;
+    border: 1px solid var(--line);
+    background: rgba(14, 20, 64, 0.6);
+    transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+  }
+  .btn svg { width: 1.1em; height: 1.1em; fill: currentColor; }
+  .btn:hover { border-color: rgba(0, 194, 255, 0.6); background: rgba(14, 20, 64, 0.95); }
+  .btn.primary {
+    border-color: transparent;
+    background: linear-gradient(90deg, var(--cyan), var(--blue) 60%, var(--violet));
+    color: #fff;
+  }
+  .btn.primary:hover { filter: brightness(1.08); }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+  }
+  .status i {
+    width: 0.5rem; height: 0.5rem; border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 0 4px rgba(0, 194, 255, 0.18);
+  }
+
+  /* Areas along one hypha */
+  .areas { position: relative; padding-block: 4rem 5rem; }
+  .hypha {
+    display: block;
+    width: 100%;
+    height: 2.5rem;
+    overflow: visible;
+    margin-bottom: 1.5rem;
+  }
+  .areas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem;
+  }
+  .area h2 {
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin: 0 0 0.6rem;
+  }
+  .area p { margin: 0; color: var(--ink-soft); max-width: 30rem; }
+
+  /* Public work */
+  .work {
+    padding-block: 3rem 5rem;
+    border-top: 1px solid var(--line);
+  }
+  .work h2 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 1.3rem;
+    margin: 0 0 1.5rem;
+  }
+  .work-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; max-width: 42rem; }
+  .work-list a {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+    border-radius: 0.5rem;
+    transition: background 160ms ease;
+  }
+  .work-list a:hover { background: rgba(14, 20, 64, 0.7); }
+  .work-list svg { width: 1.6rem; height: 1.6rem; fill: var(--ink-soft); }
+  .work-list b { display: block; font-weight: 500; }
+  .work-list small { display: block; color: var(--ink-soft); font-size: 0.95rem; }
+  .work-list .url { color: var(--ink-faint); font-size: 0.9rem; }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--line);
+    padding-block: 2rem 3rem;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    justify-content: space-between;
+  }
+  footer a { color: var(--ink-soft); }
+  footer a:hover { color: var(--ink); }
+
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      padding-block: 1rem 3rem;
+    }
+    .hero::before {
+      inset: 0 -50vw;
+      width: auto;
+      background: linear-gradient(180deg, rgba(7, 11, 36, 0) 0%, rgba(7, 11, 36, 0.75) 40%, var(--bg) 100%);
+    }
+    .hero-mark { order: -1; width: min(60%, 14rem); margin-bottom: 1rem; }
+    .areas-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .hypha { display: none; }
+    .area { padding-left: 1.25rem; border-left: 1px solid var(--line); position: relative; }
+    .area::before {
+      content: ""; position: absolute; left: -0.3rem; top: 0.45rem;
+      width: 0.55rem; height: 0.55rem; border-radius: 50%;
+      background: var(--bg); border: 1.5px solid var(--cyan);
+    }
+    .work-list a { grid-template-columns: 2rem 1fr; }
+    .work-list .url { grid-column: 2; }
+    .top nav { gap: 1.1rem; font-size: 0.95rem; }
+    .brand img { height: 2.1rem; }
+    .wordmark { font-size: 1.15rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap top">
+  <a class="brand" href="/" aria-label="CryptoCybin home">
+    <img src="assets/mark.png" alt="" width="282" height="282">
+    <span class="wordmark">Crypto<b>Cybin</b></span>
+  </a>
+  <nav aria-label="External profiles">
+    <a href="https://github.com/CryptoCybin" rel="noopener">GitHub</a>
+    <a href="https://huggingface.co/CryptoCybin" rel="noopener">Hugging Face</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero" aria-labelledby="headline">
+    <canvas id="net" aria-hidden="true"></canvas>
+
+    <div class="hero-copy">
+      <p class="status"><i aria-hidden="true"></i>Full site in progress</p>
+      <h1 id="headline">
+        <span>Inference.</span>
+        <span>Custom models.</span>
+        <span>On-chain.</span>
+        <span class="grow">Grown from one network.</span>
+      </h1>
+      <p class="lede">
+        <strong>CryptoCybin</strong> runs open-weight models as an inference provider, builds AI systems to order,
+        and operates in crypto. While this site takes shape, our public work lives on GitHub and Hugging Face.
+      </p>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/CryptoCybin" rel="noopener">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          See the GitHub org
+        </a>
+        <a class="btn" href="https://huggingface.co/CryptoCybin" rel="noopener">Models on Hugging Face</a>
+      </div>
+    </div>
+
+    <div class="hero-mark">
+      <img src="assets/mark.png" alt="" width="282" height="282" fetchpriority="high">
+    </div>
+  </section>
+
+  <section class="areas" aria-label="What we do">
+    <svg class="hypha" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="hg" x1="0" x2="1">
+          <stop offset="0" stop-color="#00C2FF"/>
+          <stop offset="0.5" stop-color="#1D5CED"/>
+          <stop offset="1" stop-color="#6A1FD6"/>
+        </linearGradient>
+      </defs>
+      <path d="M0 22 C 120 22, 160 10, 220 18 S 380 30, 420 20 S 560 8, 620 20 S 780 32, 820 18 S 1000 6, 1040 20 S 1160 26, 1200 22"
+            fill="none" stroke="url(#hg)" stroke-width="1.2" opacity="0.7"/>
+      <g fill="#070B24" stroke="#00C2FF" stroke-width="1.5">
+        <circle cx="8" cy="22" r="4"/>
+        <circle cx="408" cy="21" r="4"/>
+        <circle cx="808" cy="19" r="4"/>
+      </g>
+    </svg>
+    <div class="areas-grid">
+      <div class="area">
+        <h2>Inference</h2>
+        <p>Open-weight models hosted on our own GPUs and served through an OpenAI-compatible API. Bring your prompts, pay per token, keep your data.</p>
+      </div>
+      <div class="area">
+        <h2>Custom solutions</h2>
+        <p>Fine-tuning, agents, retrieval pipelines and evaluation, designed around your data and deployed where you already run.</p>
+      </div>
+      <div class="area">
+        <h2>Crypto</h2>
+        <p>Node operations, on-chain tooling, and research where decentralized compute meets machine learning.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="work" aria-labelledby="work-h">
+    <h2 id="work-h">Where the work is</h2>
+    <ul class="work-list">
+      <li>
+        <a href="https://github.com/CryptoCybin" rel="noopener">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span><b>GitHub</b><small>Code, tooling, and infrastructure</small></span>
+          <span class="url">github.com/CryptoCybin</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://huggingface.co/CryptoCybin" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a8.5 8.5 0 0 0-8.3 10.3c-.6.3-1 1-1 1.7 0 .5.2 1 .5 1.3-.3.4-.5.9-.5 1.4 0 1.1.9 2 2 2 .4 0 .8-.1 1.1-.3.9 1.4 2.5 2.6 6.2 2.6s5.3-1.2 6.2-2.6c.3.2.7.3 1.1.3 1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.4.3-.3.5-.8.5-1.3 0-.7-.4-1.4-1-1.7A8.5 8.5 0 0 0 12 2.5zm0 1.8a6.7 6.7 0 0 1 6.5 8.4l-.1.3c-.3-.2-.6-.3-.9-.3-.2 0-.3 0-.4.1-.6-1-2.2-1.6-5.1-1.6s-4.5.6-5.1 1.6c-.1-.1-.3-.1-.4-.1-.3 0-.6.1-.9.3l-.1-.3A6.7 6.7 0 0 1 12 4.3zM8.6 8.5c-.6 0-1.1.5-1.1 1.1 0 .3.1.5.3.7.2-.4.6-.6 1-.6.3 0 .6.1.8.4.1-.2.1-.3.1-.5 0-.6-.5-1.1-1.1-1.1zm6.8 0c-.6 0-1.1.5-1.1 1.1 0 .2 0 .3.1.5.2-.3.5-.4.8-.4.4 0 .8.2 1 .6.2-.2.3-.4.3-.7 0-.6-.5-1.1-1.1-1.1zM12 13c2.5 0 3.7.6 3.7 1.3 0 .3-.2.6-.6.9-.5-.4-1-.4-1.4.1-.4.5-.6 1-1.7 1s-1.3-.5-1.7-1c-.4-.5-.9-.5-1.4-.1-.4-.3-.6-.6-.6-.9 0-.7 1.2-1.3 3.7-1.3z"/></svg>
+          <span><b>Hugging Face</b><small>Model weights, datasets, and spaces</small></span>
+          <span class="url">huggingface.co/CryptoCybin</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <footer>
+    <span>CryptoCybin, United States. Reachable at <a href="https://cryptocybin.xyz">cryptocybin.xyz</a> and <a href="https://cryptocybin.net">cryptocybin.net</a>.</span>
+    <span>Questions? Open an issue on <a href="https://github.com/CryptoCybin" rel="noopener">GitHub</a>.</span>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const canvas = document.getElementById('net');
+  const hero = canvas.parentElement;
+  const mark = hero.querySelector('.hero-mark');
+  const ctx = canvas.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const CYAN = [0, 194, 255], BLUE = [29, 92, 237], VIOLET = [106, 31, 214];
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const mix = (t) => {
+    const [a, b, u] = t < 0.5 ? [CYAN, BLUE, t * 2] : [BLUE, VIOLET, (t - 0.5) * 2];
+    return `${Math.round(lerp(a[0], b[0], u))},${Math.round(lerp(a[1], b[1], u))},${Math.round(lerp(a[2], b[2], u))}`;
+  };
+
+  let W, H, dpr, tips, branches, nodes, pulses, origin, maxBranches, raf, done, frame;
+
+  function size() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    const r = canvas.getBoundingClientRect();
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const m = mark.getBoundingClientRect();
+    origin = { x: m.left + m.width / 2 - r.left, y: m.top + m.height * 0.62 - r.top };
+    maxBranches = Math.round(Math.min(360, Math.max(150, W * 0.14)));
+  }
+
+  function seed() {
+    tips = []; branches = []; nodes = []; pulses = []; done = false; frame = 0;
+    const n = 14;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + Math.random() * 0.3;
+      spawn(origin.x + Math.cos(a) * 60, origin.y + Math.sin(a) * 50, a, 0);
+    }
+  }
+
+  function spawn(x, y, angle, depth) {
+    if (branches.length >= maxBranches) return;
+    const b = { pts: [{ x, y }], depth, alive: true, hue: Math.min(1, depth / 7 + Math.random() * 0.15) };
+    branches.push(b);
+    tips.push({ b, x, y, angle, life: 40 + Math.random() * 120 - depth * 6, step: 2.2 + Math.random() * 1.4 });
+  }
+
+  function grow() {
+    for (let i = tips.length - 1; i >= 0; i--) {
+      const t = tips[i];
+      t.angle += (Math.random() - 0.5) * 0.45;
+      t.x += Math.cos(t.angle) * t.step;
+      t.y += Math.sin(t.angle) * t.step;
+      t.life--;
+      const out = t.x < -40 || t.x > W + 40 || t.y < -40 || t.y > H + 40;
+      t.b.pts.push({ x: t.x, y: t.y });
+      if (Math.random() < 0.035 && t.b.depth < 8) {
+        spawn(t.x, t.y, t.angle + (Math.random() < 0.5 ? 1 : -1) * (0.5 + Math.random() * 0.8), t.b.depth + 1);
+      }
+      if (t.life <= 0 || out) {
+        t.b.alive = false;
+        if (!out && Math.random() < 0.7) nodes.push({ x: t.x, y: t.y, hue: t.b.hue, r: 2 + Math.random() * 2.5, lit: 0 });
+        tips.splice(i, 1);
+      }
+    }
+    if (!tips.length) done = true;
+  }
+
+  function drawStatic() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineCap = 'round';
+    for (const b of branches) {
+      if (b.pts.length < 2) continue;
+      ctx.beginPath();
+      ctx.moveTo(b.pts[0].x, b.pts[0].y);
+      for (let i = 1; i < b.pts.length; i++) ctx.lineTo(b.pts[i].x, b.pts[i].y);
+      ctx.strokeStyle = `rgba(${mix(b.hue)},${0.55 - b.depth * 0.045})`;
+      ctx.lineWidth = Math.max(0.5, 1.6 - b.depth * 0.18);
+      ctx.stroke();
+    }
+    for (const n of nodes) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r + n.lit * 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#070B24';
+      ctx.fill();
+      ctx.strokeStyle = `rgba(${mix(n.hue)},${0.6 + n.lit * 0.4})`;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      if (n.lit > 0) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${mix(n.hue)},${n.lit})`;
+        ctx.fill();
+        n.lit = Math.max(0, n.lit - 0.02);
+      }
+    }
+  }
+
+  function pulseStep() {
+    if (pulses.length < 9 && Math.random() < 0.08 && branches.length) {
+      const b = branches[Math.floor(Math.random() * branches.length)];
+      if (b.pts.length > 12) pulses.push({ b, i: 0, speed: 0.6 + Math.random() * 0.8 });
+    }
+    for (let k = pulses.length - 1; k >= 0; k--) {
+      const p = pulses[k];
+      p.i += p.speed;
+      const idx = Math.floor(p.i);
+      if (idx >= p.b.pts.length - 1) {
+        const end = p.b.pts[p.b.pts.length - 1];
+        const n = nodes.find(n => Math.abs(n.x - end.x) < 1 && Math.abs(n.y - end.y) < 1);
+        if (n) n.lit = 1;
+        pulses.splice(k, 1);
+        continue;
+      }
+      const a = p.b.pts[idx], b2 = p.b.pts[idx + 1], u = p.i - idx;
+      const x = lerp(a.x, b2.x, u), y = lerp(a.y, b2.y, u);
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 9);
+      g.addColorStop(0, `rgba(${mix(p.b.hue)},0.95)`);
+      g.addColorStop(1, `rgba(${mix(p.b.hue)},0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, 9, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function loop() {
+    frame++;
+    if (!done) grow();
+    drawStatic();
+    pulseStep();
+    raf = requestAnimationFrame(loop);
+  }
+
+  function start() {
+    cancelAnimationFrame(raf);
+    size();
+    seed();
+    if (reduce) {
+      while (!done) grow();
+      drawStatic();
+      return;
+    }
+    loop();
+  }
+
+  let rt;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(start, 200); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf);
+    else if (!reduce) loop();
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(start); else start();
+})();
+</script>
+</body>
+</html>
